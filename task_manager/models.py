@@ -15,9 +15,13 @@ class Position(models.Model):
         ('Designer', 'Designer'),
         ('DevOps', 'DevOps'),
         ('HR', 'HR'),
+        ("CEO", "CEO"),
     )
 
     name = models.CharField(max_length=63, choices=POSITION_CHOICES, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class TaskType(models.Model):
@@ -32,9 +36,12 @@ class TaskType(models.Model):
 
     name = models.CharField(max_length=63, choices=TASK_TYPE_CHOICES, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Worker(AbstractUser):
-    position = models.ForeignKey(Position, on_delete=models.RESTRICT)
+    position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True)
 
     class Meta:
         verbose_name = "worker"
@@ -42,7 +49,9 @@ class Worker(AbstractUser):
         ordering = ["last_name"]
 
     def __str__(self):
-        return f"{self.username} ({self.first_name} {self.last_name}, position: {self.position.name})"
+        return f"{self.username} " \
+               f"({self.first_name} {self.last_name}, " \
+               f"position: {self.position.name if self.position else None})"
 
 
 class Task(models.Model):
@@ -51,9 +60,9 @@ class Task(models.Model):
         ('High', '**'),
         ("Average", "*"),
     ]
-    min_length_validator = MinLengthValidator(limit_value=20)
+    min_length_validator = MinLengthValidator(limit_value=10)
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, validators=[min_length_validator])
     description = models.TextField(max_length=500)
     deadline = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
