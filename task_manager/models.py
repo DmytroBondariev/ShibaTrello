@@ -19,16 +19,6 @@ class Position(models.Model):
 
     name = models.CharField(max_length=63, choices=POSITION_CHOICES, unique=True)
 
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        super().clean()
-        valid_choices = set(choice[0] for choice in self.POSITION_CHOICES)
-        if self.name not in valid_choices:
-            raise ValidationError({'name': 'Invalid task type name.'})
-
 
 class TaskType(models.Model):
     TASK_TYPE_CHOICES = (
@@ -41,16 +31,6 @@ class TaskType(models.Model):
     )
 
     name = models.CharField(max_length=63, choices=TASK_TYPE_CHOICES, unique=True)
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-    def clean(self):
-        super().clean()
-        valid_choices = set(choice[0] for choice in self.TASK_TYPE_CHOICES)
-        if self.name not in valid_choices:
-            raise ValidationError({'name': 'Invalid task type name.'})
 
 
 class Worker(AbstractUser):
@@ -92,11 +72,8 @@ class Task(models.Model):
         super().save(*args, **kwargs)
 
     def clean(self):
-        super().clean()
-        valid_choices = set(choice[0] for choice in self.PRIORITY_CHOICES)
-        if self.name not in valid_choices:
-            raise ValidationError({'name': 'Invalid task type name.'})
         if self.deadline <= timezone.now():
             raise ValidationError({'deadline': 'The deadline must be in the future.'})
+
         if self.deadline <= timezone.now() + timezone.timedelta(minutes=10):
             raise ValidationError({'deadline': 'The deadline must be at least 10 minutes in the future.'})
