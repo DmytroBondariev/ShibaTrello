@@ -2,11 +2,14 @@ from django.contrib.auth.views import PasswordChangeDoneView, PasswordResetDoneV
 from django.urls import path
 
 from task_manager.views import index, WorkerListView, UserLoginView, logout_view, UserPasswordChangeView, \
-    UserPasswordResetView, UserPasswordResetConfirmView, TaskListView
+    UserPasswordResetView, UserPasswordResetConfirmView, TaskListView, WorkerDetailView
 
 urlpatterns = [
     path("", index, name="index"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
+    path(
+        "workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"
+    ),
     path("tasks/", TaskListView.as_view(), name="task-list"),
     path('accounts/login/', UserLoginView.as_view(), name='login'),
     path('accounts/logout/', logout_view, name='logout'),

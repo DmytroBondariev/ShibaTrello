@@ -12,7 +12,7 @@ admin.site.register(TaskType)
 class WorkerAdmin(UserAdmin):
     list_display = UserAdmin.list_display + ("position",)
     fieldsets = UserAdmin.fieldsets + (
-        (("Additional info", {"fields": ("position",)}),)
+        (("Additional info", {"fields": ("position", "photo")}),)
     )
     add_fieldsets = UserAdmin.add_fieldsets + (
         (
@@ -24,6 +24,7 @@ class WorkerAdmin(UserAdmin):
                         "last_name",
                         "position",
                         "email",
+                        "photo",
                     )
                 },
             ),

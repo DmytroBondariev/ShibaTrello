@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 from it_company_task_manager import settings
@@ -42,16 +43,20 @@ class TaskType(models.Model):
 
 class Worker(AbstractUser):
     position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True)
+    photo = models.ImageField(upload_to='media/workers_photo', null=True, blank=True)
 
     class Meta:
         verbose_name = "worker"
         verbose_name_plural = "workers"
-        ordering = ["position"]
+        ordering = ["-position"]
 
     def __str__(self):
         return f"{self.username} " \
                f"({self.first_name} {self.last_name}, " \
                f"position: {self.position.name if self.position else None})"
+
+    def get_absolute_url(self):
+        return reverse("task_manager:worker-detail", kwargs={"pk": self.id})
 
 
 class Task(models.Model):
@@ -71,7 +76,7 @@ class Task(models.Model):
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
 
     class Meta:
-        ordering = ["deadline"]
+        ordering = ["-priority"]
 
     def __str__(self):
         return f"Task number: {self.id}. Topic: {self.name}"
