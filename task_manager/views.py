@@ -8,7 +8,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
 
 from task_manager.forms import UserLoginForm, UserPasswordResetForm, UserSetPasswordForm, UserPasswordChangeForm, \
-    WorkerSearchForm, TaskSearchForm
+    WorkerSearchForm, TaskSearchForm, TaskForm
 from task_manager.models import Position, Task, TaskType, Worker
 
 
@@ -50,10 +50,16 @@ class WorkerListView(generic.ListView):
         return queryset
 
 
-class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
+class WorkerDetailView(generic.DetailView):
     model = Worker
     queryset = Worker.objects.all().prefetch_related("tasks__task_type")
     template_name = "pages/worker_detail.html"
+
+
+class TaskDetailView(generic.DetailView):
+    model = Task
+    queryset = Task.objects.all()
+    template_name = "pages/task_detail.html"
 
 
 class TaskListView(generic.ListView):
@@ -80,6 +86,21 @@ class TaskListView(generic.ListView):
                 name__icontains=form.cleaned_data["name"]
             )
         return queryset
+
+
+class TaskCreateView(generic.CreateView):
+    fields = ("task_type", "name", "description", "deadline", "priority", "assignees")
+    model = Task
+    # form_class = TaskForm
+    template_name = "pages/task_form.html"
+    success_url = reverse_lazy("task_manager:task-list")
+
+
+class TaskUpdateView(generic.UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = "pages/task_form.html"
+    success_url = reverse_lazy("task_manager:task-list")
 
 
 class UserLoginView(LoginView):

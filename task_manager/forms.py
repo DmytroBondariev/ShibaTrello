@@ -1,8 +1,11 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm, \
     PasswordChangeForm, UsernameField
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+
+from task_manager.models import Task
 
 
 class UserLoginForm(AuthenticationForm):
@@ -59,3 +62,16 @@ class TaskSearchForm(forms.Form):
         label="",
         widget=forms.TextInput(attrs={"placeholder": "Search by name.."})
     )
+
+
+class TaskForm(forms.ModelForm):
+    assignees = forms.ModelMultipleChoiceField(
+        queryset=get_user_model().objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    class Meta:
+        model = Task
+        fields = "__all__"
+
