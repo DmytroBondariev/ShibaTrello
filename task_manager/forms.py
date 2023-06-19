@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from task_manager.models import Task
+from task_manager.models import Task, Worker
 
 
 class UserLoginForm(AuthenticationForm):
@@ -46,6 +46,17 @@ class UserPasswordChangeForm(PasswordChangeForm):
     }), label="Confirm New Password")
 
 
+class WorkerForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Worker
+        fields = UserCreationForm.Meta.fields + (
+            "first_name",
+            "last_name",
+            "position",
+            "photo",
+        )
+
+
 class WorkerSearchForm(forms.Form):
     name = forms.CharField(
         max_length=255,
@@ -74,4 +85,3 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = "__all__"
-

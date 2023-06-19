@@ -8,7 +8,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
 
 from task_manager.forms import UserLoginForm, UserPasswordResetForm, UserSetPasswordForm, UserPasswordChangeForm, \
-    WorkerSearchForm, TaskSearchForm, TaskForm
+    WorkerSearchForm, TaskSearchForm, TaskForm, WorkerForm
 from task_manager.models import Position, Task, TaskType, Worker
 
 
@@ -23,6 +23,19 @@ def index(request):
         "num_visits": num_visits
     }
     return render(request=request, template_name='pages/index.html', context=context)
+
+
+class WorkerCreateView(generic.CreateView):
+    model = Worker
+    form_class = WorkerForm
+    template_name = "pages/worker_form.html"
+
+
+class WorkerUpdateView(generic.UpdateView):
+    model = Worker
+    fields = ("username", "first_name", "last_name", "position", "photo",)
+    template_name = "pages/worker_form.html"
+    success_url = reverse_lazy("task_manager:worker-list")
 
 
 class WorkerListView(generic.ListView):
@@ -130,3 +143,14 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 class UserPasswordChangeView(PasswordChangeView):
     template_name = 'accounts/password_change.html'
     form_class = UserPasswordChangeForm
+
+
+def toggle_assign_to_task(request, pk):
+    worker = Worker.objects.get(id=request.user.id)
+    if (
+            Task.objects.get(id=pk) in worker.tasks.all()
+    ):
+        worker.tasks.remove(pk)
+    else:
+        worker.tasks.add(pk)
+    return HttpResponseRedirect(reverse_lazy("task_manager:task-detail", args=[pk]))

@@ -43,7 +43,7 @@ class TaskType(models.Model):
 
 class Worker(AbstractUser):
     position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True)
-    photo = models.ImageField(upload_to='media/workers_photo', null=True, blank=True)
+    photo = models.ImageField(upload_to='workers_photo', null=True, blank=True)
 
     class Meta:
         verbose_name = "worker"
@@ -91,3 +91,6 @@ class Task(models.Model):
 
         if self.deadline <= timezone.now() + timezone.timedelta(minutes=10):
             raise ValidationError({'deadline': 'The deadline must be at least 10 minutes in the future.'})
+
+    def get_absolute_url(self):
+        return reverse("task_manager:task-detail", kwargs={"pk": self.id})
