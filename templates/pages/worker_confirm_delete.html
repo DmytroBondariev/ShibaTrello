@@ -1,0 +1,19 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete that worker?</p>
+        <div class="text-center">
+          <form method="post" action="{% url 'task_manager:worker-delete' pk=object.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="{% url 'task_manager:worker-list' %}" class="btn btn-secondary">Cancel</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

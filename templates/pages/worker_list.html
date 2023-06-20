@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    <style>
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-img-top {
+            object-fit: cover;
+            height: 350px; /* Adjust the height as needed */
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-text {
+            margin-top: auto;
+        }
+    </style>
+
+    <div class="container">
+        <div class="mb-4">
+            <h1>Worker List</h1>
+            <a href="{% url 'task_manager:worker-create' %}" class="btn btn-primary link-to-page">
+                Create
+            </a>
+        </div>
+
+        <form action="" method="get" class="mb-4">
+            <div class="input-group">
+                {{ search_form|crispy }}
+                <button type="submit" class="btn btn-secondary">Search</button>
+            </div>
+        </form>
+
+        {% if worker_list %}
+            <div class="row">
+                {% for worker in worker_list %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-img-top-wrapper">
+                                {% if worker.photo %}
+                                    <img src="{{ worker.photo.url }}" class="card-img-top" alt="Worker Photo">
+                                {% else %}
+                                    <img src="{% static 'img/default-worker-photo.png' %}" class="card-img-top" alt="Default Worker Photo">
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <h5 class="card-title mb-0">{{ worker.first_name }} {{ worker.last_name }}</h5>
+                                    <h6 class="card-subtitle text-muted">{{ worker.position }}</h6>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="card-text">
+                                        <strong>Tasks:</strong>
+                                        <span class="badge bg-primary">{{ worker.tasks.count }}</span>
+                                    </p>
+                                    <a href="{{ worker.get_absolute_url }}" class="btn btn-primary btn-sm">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>There are no workers available</p>
+        {% endif %}
+    </div>
+{% endblock %}
