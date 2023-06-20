@@ -1,9 +1,9 @@
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetConfirmView, PasswordChangeView
+from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import generic
 
 from task_manager.forms import UserLoginForm, \
@@ -24,17 +24,23 @@ def index(request):
     return render(request=request, template_name='pages/index.html', context=context)
 
 
-class WorkerCreateView(generic.CreateView):
+class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
     model = Worker
     form_class = WorkerForm
     template_name = "pages/worker_form.html"
 
 
-class WorkerUpdateView(generic.UpdateView):
+class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Worker
     fields = ("username", "first_name", "last_name", "position", "photo",)
     template_name = "pages/worker_form.html"
     success_url = reverse_lazy("task_manager:worker-list")
+
+
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Worker
+    success_url = reverse_lazy("task_manager:worker-list")
+    template_name = "pages/worker_confirm_delete.html"
 
 
 class WorkerListView(generic.ListView):
@@ -103,7 +109,6 @@ class TaskListView(generic.ListView):
 class TaskCreateView(generic.CreateView):
     fields = ("task_type", "name", "description", "deadline", "priority", "assignees")
     model = Task
-    # form_class = TaskForm
     template_name = "pages/task_form.html"
     success_url = reverse_lazy("task_manager:task-list")
 
