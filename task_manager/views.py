@@ -4,10 +4,9 @@ from django.contrib.auth.views import LoginView, PasswordResetView, PasswordRese
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import generic
 
-from task_manager.forms import UserLoginForm, UserPasswordResetForm, UserSetPasswordForm, UserPasswordChangeForm, \
+from task_manager.forms import UserLoginForm, \
     WorkerSearchForm, TaskSearchForm, TaskForm, WorkerForm
 from task_manager.models import Position, Task, TaskType, Worker
 
@@ -128,21 +127,6 @@ class UserLoginView(LoginView):
 def logout_view(request):
     logout(request)
     return redirect('/')
-
-
-class UserPasswordResetView(PasswordResetView):
-    template_name = 'accounts/password_reset.html'
-    form_class = UserPasswordResetForm
-
-
-class UserPasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'accounts/password_reset_confirm.html'
-    form_class = UserSetPasswordForm
-
-
-class UserPasswordChangeView(PasswordChangeView):
-    template_name = 'accounts/password_change.html'
-    form_class = UserPasswordChangeForm
 
 
 def toggle_assign_to_task(request, pk):
