@@ -1,6 +1,6 @@
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -11,17 +11,19 @@ from task_manager.forms import UserLoginForm, \
 from task_manager.models import Position, Task, TaskType, Worker
 
 
-def index(request):
-    num_positions = Position.objects.count()
-    num_task_types = TaskType.objects.count()
-    num_visits = request.session.get("num_visits", 0)
-    request.session["num_visits"] = num_visits + 1
-    context = {
-        "num_positions": num_positions,
-        "num_task_types": num_task_types,
-        "num_visits": num_visits
-    }
-    return render(request=request, template_name='pages/index.html', context=context)
+class IndexView(generic.View):
+    @staticmethod
+    def get(request):
+        num_positions = Position.objects.count()
+        num_task_types = TaskType.objects.count()
+        num_visits = request.session.get("num_visits", 0)
+        request.session["num_visits"] = num_visits + 1
+        context = {
+            "num_positions": num_positions,
+            "num_task_types": num_task_types,
+            "num_visits": num_visits
+        }
+        return render(request=request, template_name='pages/index.html', context=context)
 
 
 class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -129,17 +131,20 @@ class UserLoginView(LoginView):
         return reverse_lazy('task_manager:index')
 
 
-def logout_view(request):
-    logout(request)
-    return redirect('/')
+class UserLogoutView(LogoutView):
+    def get(self, request, *args, **kwargs):
+        logout(request=request)
+        return redirect("/")
 
 
-def toggle_assign_to_task(request, pk):
-    worker = Worker.objects.get(id=request.user.id)
-    if (
-            Task.objects.get(id=pk) in worker.tasks.all()
-    ):
-        worker.tasks.remove(pk)
-    else:
-        worker.tasks.add(pk)
-    return HttpResponseRedirect(reverse_lazy("task_manager:task-detail", args=[pk]))
+class ToggleAssignToTaskView(generic.View):
+    @staticmethod
+    def get(request, pk):
+        worker = Worker.objects.get(id=request.user.id)
+        task = Task.objects.get(id=pk)
+        if task in worker.tasks.all():
+            worker.tasks.remove(task)
+        else:
+            worker.tasks.add(task)
+        return HttpResponseRedirect(reverse_lazy("task_manager:task-detail", args=[pk]))
+

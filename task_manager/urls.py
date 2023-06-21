@@ -1,11 +1,11 @@
 from django.urls import path
 
-from task_manager.views import index, WorkerListView, UserLoginView, logout_view, \
+from task_manager.views import IndexView, WorkerListView, UserLoginView, \
     TaskListView, WorkerDetailView, TaskCreateView, TaskUpdateView, \
-    TaskDetailView, WorkerCreateView, WorkerUpdateView, toggle_assign_to_task, WorkerDeleteView
+    TaskDetailView, WorkerCreateView, WorkerUpdateView, ToggleAssignToTaskView, WorkerDeleteView, UserLogoutView
 
 urlpatterns = [
-    path("", index, name="index"),
+    path("", IndexView.as_view(), name="index"),
     path("workers/", WorkerListView.as_view(), name="worker-list"),
     path("workers/create/", WorkerCreateView.as_view(), name="worker-create"),
     path(
@@ -21,11 +21,11 @@ urlpatterns = [
     ),
     path(
         "tasks/<int:pk>/toggle-assign/",
-        toggle_assign_to_task,
+        ToggleAssignToTaskView.as_view(),
         name="toggle-task-assign",
     ),
     path('accounts/login/', UserLoginView.as_view(), name='login'),
-    path('accounts/logout/', logout_view, name='logout'),
+    path('accounts/logout/', UserLogoutView.as_view(), name='logout'),
 ]
 
 app_name = "task_manager"

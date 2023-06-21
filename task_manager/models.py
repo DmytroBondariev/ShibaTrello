@@ -42,7 +42,7 @@ class TaskType(models.Model):
 
 
 class Worker(AbstractUser):
-    position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True)
+    position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True, related_name="workers")
     photo = models.ImageField(upload_to='workers_photo', null=True, blank=True)
 
     class Meta:
@@ -72,7 +72,7 @@ class Task(models.Model):
     deadline = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
     priority = models.CharField(max_length=63, choices=PRIORITY_CHOICES)
-    task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, null=True)
+    task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, null=True, related_name="tasks")
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
 
     class Meta:

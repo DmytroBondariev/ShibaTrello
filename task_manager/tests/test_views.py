@@ -76,7 +76,7 @@ class ToggleAssignToTaskViewTest(TestCase):
         response = self.client.get(reverse('task_manager:toggle-task-assign', args=[self.task.id]))
 
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(self.worker.tasks.filter(pk=self.task.pk).exists())
+        self.assertFalse(self.worker.tasks.filter(pk=self.task.id).exists())
 
 
 class IndexViewTest(TestCase):
