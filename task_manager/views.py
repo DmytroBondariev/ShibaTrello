@@ -23,7 +23,11 @@ class IndexView(generic.View):
             "num_task_types": num_task_types,
             "num_visits": num_visits
         }
-        return render(request=request, template_name='pages/index.html', context=context)
+        return render(
+            request=request,
+            template_name='pages/index.html',
+            context=context
+        )
 
 
 class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
@@ -109,7 +113,14 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
 
 
 class TaskCreateView(LoginRequiredMixin, generic.CreateView):
-    fields = ("task_type", "name", "description", "deadline", "priority", "assignees")
+    fields = (
+        "task_type",
+        "name",
+        "description",
+        "deadline",
+        "priority",
+        "assignees"
+    )
     model = Task
     template_name = "pages/task_form.html"
     success_url = reverse_lazy("task_manager:task-list")
@@ -146,5 +157,6 @@ class ToggleAssignToTaskView(generic.View):
             worker.tasks.remove(task)
         else:
             worker.tasks.add(task)
-        return HttpResponseRedirect(reverse_lazy("task_manager:task-detail", args=[pk]))
-
+        return HttpResponseRedirect(
+            reverse_lazy("task_manager:task-detail", args=[pk])
+        )

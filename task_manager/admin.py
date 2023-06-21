@@ -35,4 +35,10 @@ class WorkerAdmin(UserAdmin):
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
     search_fields = ("name",)
-    list_filter = ("priority", "is_completed", "deadline", "task_type", "assignees",)
+    list_filter = (
+        "priority",
+        "is_completed",
+        "deadline",
+        "task_type",
+        "assignees",
+    )

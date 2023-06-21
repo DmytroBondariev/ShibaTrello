@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from task_manager.models import Position, TaskType, Task, Worker
+from task_manager.models import Position, TaskType, Task
 
 TASKS_URL = reverse("task_manager:task-list")
 
@@ -50,13 +50,19 @@ class PrivateTaskTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["task_list"]), list(tasks))
-        self.assertTemplateUsed(response=response, template_name="pages/task_list.html")
+        self.assertTemplateUsed(
+            response=response,
+            template_name="pages/task_list.html"
+        )
 
 
 class ToggleAssignToTaskViewTest(TestCase):
     def setUp(self):
         self.task_type = TaskType.objects.create(name="Bug")
-        self.worker = get_user_model().objects.create_user(username='testuser', password='testpassword12345')
+        self.worker = get_user_model().objects.create_user(
+            username='testuser',
+            password='testpassword12345'
+        )
         self.task = Task.objects.create(
             name='Task Testing',
             description='Lorem ipsum dolor sit amet',
@@ -66,14 +72,25 @@ class ToggleAssignToTaskViewTest(TestCase):
         )
 
     def test_toggle_assign_to_task(self):
-        self.client.login(username='testuser', password='testpassword12345')
+        self.client.login(
+            username='testuser',
+            password='testpassword12345'
+        )
 
-        response = self.client.get(reverse('task_manager:toggle-task-assign', args=[self.task.id]))
+        response = self.client.get(
+            reverse(
+                'task_manager:toggle-task-assign', args=[self.task.id]
+            )
+        )
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue(self.worker.tasks.filter(pk=self.task.id).exists())
 
-        response = self.client.get(reverse('task_manager:toggle-task-assign', args=[self.task.id]))
+        response = self.client.get(
+            reverse(
+                'task_manager:toggle-task-assign', args=[self.task.id]
+            )
+        )
 
         self.assertEqual(response.status_code, 302)
         self.assertFalse(self.worker.tasks.filter(pk=self.task.id).exists())

@@ -19,7 +19,11 @@ class Position(models.Model):
         ("CEO", "CEO"),
     )
 
-    name = models.CharField(max_length=63, choices=POSITION_CHOICES, unique=True)
+    name = models.CharField(
+        max_length=63,
+        choices=POSITION_CHOICES,
+        unique=True
+    )
 
     def __str__(self):
         return self.name
@@ -35,14 +39,22 @@ class TaskType(models.Model):
         ("Deploy", "Deploy"),
     )
 
-    name = models.CharField(max_length=63, choices=TASK_TYPE_CHOICES, unique=True)
+    name = models.CharField(
+        max_length=63,
+        choices=TASK_TYPE_CHOICES,
+        unique=True
+    )
 
     def __str__(self):
         return self.name
 
 
 class Worker(AbstractUser):
-    position = models.ForeignKey(Position, on_delete=models.RESTRICT, null=True, related_name="workers")
+    position = models.ForeignKey(
+        Position,
+        on_delete=models.RESTRICT,
+        null=True, related_name="workers"
+    )
     photo = models.ImageField(upload_to='workers_photo', null=True, blank=True)
 
     class Meta:
@@ -67,13 +79,27 @@ class Task(models.Model):
     ]
     min_length_validator = MinLengthValidator(limit_value=10)
 
-    name = models.CharField(max_length=100, unique=True, validators=[min_length_validator])
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+        validators=[min_length_validator]
+    )
     description = models.TextField(max_length=500)
     deadline = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
-    priority = models.CharField(max_length=63, choices=PRIORITY_CHOICES)
-    task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, null=True, related_name="tasks")
-    assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
+    priority = models.CharField(
+        max_length=63,
+        choices=PRIORITY_CHOICES
+    )
+    task_type = models.ForeignKey(
+        TaskType,
+        on_delete=models.SET_NULL,
+        null=True, related_name="tasks"
+    )
+    assignees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="tasks"
+    )
 
     class Meta:
         ordering = ["-priority"]
@@ -87,10 +113,16 @@ class Task(models.Model):
 
     def clean(self):
         if self.deadline <= timezone.now():
-            raise ValidationError({'deadline': 'The deadline must be in the future.'})
+            raise ValidationError(
+                {'deadline': 'The deadline must be'
+                             ' in the future.'}
+            )
 
         if self.deadline <= timezone.now() + timezone.timedelta(minutes=10):
-            raise ValidationError({'deadline': 'The deadline must be at least 10 minutes in the future.'})
+            raise ValidationError(
+                {'deadline': 'The deadline must be '
+                             'at least 10 minutes in the future.'}
+            )
 
     def get_absolute_url(self):
         return reverse("task_manager:task-detail", kwargs={"pk": self.id})

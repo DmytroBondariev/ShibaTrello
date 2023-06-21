@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.test import  TestCase
+from django.test import TestCase
 from django.urls import reverse
 
 from task_manager.models import Position
@@ -25,6 +25,9 @@ class AdminSiteTests(TestCase):
         self.assertContains(response=response, text=self.worker.position)
 
     def test_worker_detailed_position_listed(self):
-        url = reverse("admin:task_manager_worker_change", args=[self.worker.id])
+        url = reverse(
+            "admin:task_manager_worker_change",
+            args=[self.worker.id]
+        )
         response = self.client.get(url)
         self.assertContains(response=response, text=self.worker.position)
