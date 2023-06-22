@@ -150,7 +150,7 @@ class UserLogoutView(LogoutView):
 
 class ToggleAssignToTaskView(generic.View):
     @staticmethod
-    def get(request, pk):
+    def post(request, pk):
         worker = Worker.objects.get(id=request.user.id)
         task = Task.objects.get(id=pk)
         if task in worker.tasks.all():

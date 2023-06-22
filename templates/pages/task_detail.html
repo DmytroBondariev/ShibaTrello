@@ -17,13 +17,15 @@
             Only CEO or Project Managers are allowed to update tasks!
           {% endif %}
           {% if object in user.tasks.all %}
-            <a href="{% url 'task_manager:toggle-task-assign' pk=object.id %}" class="btn btn-danger link-to-page">
-              Delete me from this task
-            </a>
+            <form method="post" action="{% url 'task_manager:toggle-task-assign' pk=object.id%}">
+              {% csrf_token %}
+              <input class="btn btn-danger link-to-page" type="submit" value="Delete me to this task">
+            </form>
           {% else %}
-            <a href="{% url 'task_manager:toggle-task-assign' pk=object.id %}" class="btn btn-primary link-to-page">
-              Assign me to this task
-            </a>
+            <form method="post" action="{% url 'task_manager:toggle-task-assign' pk=object.id%}">
+              {% csrf_token %}
+              <input class="btn btn-primary link-to-page" type="submit" value="Assign me to this task">
+            </form>
           {% endif %}
         </div>
       </div>
