@@ -77,7 +77,7 @@ class ToggleAssignToTaskViewTest(TestCase):
             password='testpassword12345'
         )
 
-        response = self.client.get(
+        response = self.client.post(
             reverse(
                 'task_manager:toggle-task-assign', args=[self.task.id]
             )
@@ -86,7 +86,7 @@ class ToggleAssignToTaskViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(self.worker.tasks.filter(pk=self.task.id).exists())
 
-        response = self.client.get(
+        response = self.client.post(
             reverse(
                 'task_manager:toggle-task-assign', args=[self.task.id]
             )
