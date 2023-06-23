@@ -102,7 +102,6 @@ DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
         default='postgres://xpaugwgi:PwnGGesMudSvcRWETl2m3EYyQP2FdDgS@dumbo.db.elephantsql.com/xpaugwgi',
-        conn_max_age=600
     )
 }
 
