@@ -34,7 +34,7 @@ class IndexView(generic.View):
         )
 
 
-class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
+class WorkerCreateView(generic.CreateView):
     model = Worker
     form_class = WorkerForm
     template_name = "pages/worker_form.html"
