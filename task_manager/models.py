@@ -1,3 +1,6 @@
+import os.path
+import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
@@ -49,13 +52,21 @@ class TaskType(models.Model):
         return self.name
 
 
+def worker_image_file_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+
+    filename = f"{instance.username}-{uuid.uuid4()}.{extension}"
+
+    return os.path.join("uploads/users", filename)
+
+
 class Worker(AbstractUser):
     position = models.ForeignKey(
         Position,
         on_delete=models.CASCADE,
         null=True, related_name="workers"
     )
-    photo = models.ImageField(upload_to='workers_photo', null=True, blank=True)
+    photo = models.ImageField(upload_to=worker_image_file_path, null=True, blank=True)
 
     class Meta:
         verbose_name = "worker"
