@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <h1>{{ object|yesno:"Update,Create"}} Worker</h1>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <form method="post" class="task-form" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form|crispy }}
+
+              <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                  flatpickr("#id_deadline", {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                  });
+                });
+              </script>
+
+              <button type="submit" class="btn btn-primary">{{ object|yesno:"Update,Create"}}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h2>{{ worker.username }}</h2>
+              <div>
+                <a href="{% url 'task_manager:worker-delete' pk=object.id %}" class="btn btn-primary btn-sm">Delete</a>
+                <a href="{% url 'task_manager:worker-update' pk=worker.id %}" class="btn btn-secondary btn-sm link-to-page">Update info</a>
+              </div>
+            </div>
+            <div class="text-center mt-3">
+              {% if worker.photo %}
+                <img src="{{ worker.photo.url }}" alt="Worker Photo" class="rounded-circle img-lg" style="width: 200px; height: 200px;">
+              {% else %}
+                <img src="{% static 'img/default-worker-photo.png' %}" alt="Default Worker Photo" class="rounded-circle img-lg" style="width: 200px; height: 200px;">
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Full name:</strong> {{ worker.first_name }} {{ worker.last_name }}</p>
+                <p><strong>Position:</strong> {{ worker.position.name }}</p>
+                <p><strong>Email:</strong> {{ worker.email }}</p>
+                <p><strong>Admin:</strong> {% if worker.is_staff %}Yes{% else %}No{% endif %}</p>
+              </div>
+              <div class="col-md-6">
+                <h4>Assigned tasks</h4>
+                <div class="list-group">
+                  {% for task in worker.tasks.all %}
+                    <a href="{{ task.get_absolute_url }}" class="list-group-item list-group-item-action">
+                      <span class="text-gradient text-primary mb-3">{{ task.task_type }}</span>
+                      <div class="task-details">
+                        <p><strong>Name:</strong> {{ task.name }}</p>
+                        <p><strong>Deadline:</strong> {{ task.deadline }}</p>
+                      </div>
+                    </a>
+                  {% empty %}
+                    <p>No tasks assigned</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    <div class="container">
+        <div class="mb-4">
+            <h1>Task Tracker</h1>
+            {% if user.position.name == "CEO" or user.position.name == "Project Manager" %}
+              <a href="{% url 'task_manager:task-create' %}" class="btn btn-primary link-to-page">
+                  Create new task
+              </a>
+            {% else %}
+              Only CEO or Project Managers are allowed to create tasks!
+            {% endif %}
+        </div>
+
+        <form action="" method="get" class="mb-4">
+            <div class="input-group">
+                {{ search_form|crispy }}
+                <button type="submit" class="btn btn-secondary">Search</button>
+            </div>
+        </form>
+
+        {% if task_list %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Deadline</th>
+                            <th scope="col">Assignees</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in task_list %}
+                            <tr>
+                                <td><a href="{{task.get_absolute_url}}">{{ task.name }}</a></td>
+                                <td>{{ task.task_type.name }}</td>
+                                <td>{{ task.priority }}</td>
+                                <td>{{ task.deadline }}</td>
+                                <td>
+                                    {% for worker in task.assignees.all %}
+                                        <a href="{{ worker.get_absolute_url }}">{{ worker.username }}</a>{% if not forloop.last %}, {% endif %}
+                                    {% empty %}
+                                        No workers assigned
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">There are no tasks available</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>There are no tasks available</p>
+        {% endif %}
+    </div>
+{% endblock %}

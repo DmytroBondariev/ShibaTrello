@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container" style="width: 80%;">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2 class="card-title mb-3">{{ task.name }}</h2>
+          <span class="text-gradient text-primary mb-3">{{ task.task_type }}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          {% if user.position.name == "CEO" or user.position.name == "Project Manager" %}
+            <a href="{% url 'task_manager:task-update' pk=task.id %}" class="btn btn-secondary btn-sm">Update</a>
+          {% else %}
+            Only CEO or Project Managers are allowed to update tasks!
+          {% endif %}
+          {% if object in user.tasks.all %}
+            <form method="post" action="{% url 'task_manager:toggle-task-assign' pk=object.id%}">
+              {% csrf_token %}
+              <input class="btn btn-danger link-to-page" type="submit" value="Delete me to this task">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'task_manager:toggle-task-assign' pk=object.id%}">
+              {% csrf_token %}
+              <input class="btn btn-primary link-to-page" type="submit" value="Assign me to this task">
+            </form>
+          {% endif %}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="description"><strong>Description:</strong></label>
+          <textarea id="description" class="form-control" rows="5" readonly>{{ task.description }}</textarea>
+        </div>
+        <div class="task-details">
+          <p><strong>Deadline:</strong> {{ task.deadline }}</p>
+          <p><strong>Priority:</strong> {{ task.priority }}</p>
+          <p><strong>Assignees:</strong></p>
+          <ul class="list-group">
+            {% for assignee in task.assignees.all %}
+              <a href="{{ assignee.get_absolute_url }}" class="list-group-item list-group-item-action">
+                {{ assignee }}
+              </a>
+            {% empty %}
+              <li class="list-group-item">No assignees</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
